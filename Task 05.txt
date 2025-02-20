@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #reader {
+            width: 300px;
+            margin: auto;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code Scanner</h1>
+    <div id="reader"></div>
+    <div id="result">Scan a QR Code</div>
+    <button id="openLink" style="display: none;">Open Link</button>
+    
+    <script>
+        function onScanSuccess(decodedText, decodedResult) {
+            document.getElementById('result').innerText = `Scanned: ${decodedText}`;
+            const openLinkBtn = document.getElementById('openLink');
+            if (decodedText.startsWith('http://') || decodedText.startsWith('https://')) {
+                openLinkBtn.style.display = 'block';
+                openLinkBtn.onclick = () => window.open(decodedText, '_blank');
+            } else {
+                openLinkBtn.style.display = 'none';
+            }
+        }
+        
+        function onScanFailure(error) {
+            console.warn(`QR Code scan failed: ${error}`);
+        }
+        
+        let html5QrCode = new Html5Qrcode("reader");
+        html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: 250 },
+            onScanSuccess,
+            onScanFailure
+        );
+    </script>
+</body>
+</html>
